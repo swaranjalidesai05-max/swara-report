@@ -1,0 +1,249 @@
+{% extends "base.html" %}
+
+{% block title %}Event Details - {{ event.title }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>Event Details</h2>
+    <a href="{{ url_for('events') }}" class="btn btn-secondary">Back to Events</a>
+</div>
+
+<div class="event-details-container">
+    <div class="event-details-card">
+        <h3>{{ event.title }}</h3>
+
+        <div class="event-details-grid">
+            <div class="detail-item">
+                <strong>Event ID:</strong> {{ event.id }}
+            </div>
+            <div class="detail-item">
+                <strong>Academic Year:</strong> {{ event.academic_year or 'Not specified' }}
+            </div>
+            <div class="detail-item">
+                <strong>Date:</strong> {{ event.date }}
+            </div>
+            <div class="detail-item">
+                <strong>Time:</strong> {{ event.event_time or 'Not specified' }}
+            </div>
+            <div class="detail-item">
+                <strong>Venue:</strong> {{ event.venue }}
+            </div>
+            <div class="detail-item">
+                <strong>Department:</strong> {{ event.department }}
+            </div>
+            <div class="detail-item">
+                <strong>Event Type:</strong> {{ event.event_type or 'Not specified' }}
+            </div>
+        </div>
+
+        <div class="detail-section">
+            <h4>Resource Person Details</h4>
+            <p><strong>Name:</strong> {{ event.resource_person or 'Not specified' }}</p>
+            <p><strong>Designation:</strong> {{ event.resource_designation or 'Not specified' }}</p>
+            <p><strong>Event Coordinator:</strong> {{ event.event_coordinator or 'Not specified' }}</p>
+        </div>
+
+        <div class="detail-section">
+            <h4>Description</h4>
+            <p>{{ event.description or 'No description provided' }}</p>
+        </div>
+
+        <div class="detail-section">
+            <h4>Outcomes</h4>
+            <ul>
+                <li><strong>Outcome 1:</strong> {{ event.outcome_1 or 'Not specified' }}</li>
+                <li><strong>Outcome 2:</strong> {{ event.outcome_2 or 'Not specified' }}</li>
+                <li><strong>Outcome 3:</strong> {{ event.outcome_3 or 'Not specified' }}</li>
+            </ul>
+        </div>
+
+        {% if event.feedback_form_link or event.feedback_sheet_id %}
+        <div class="detail-section">
+            <h4>Feedback Form & Analysis</h4>
+            {% if event.feedback_form_link %}
+            <p><strong>Google Form:</strong> <a href="{{ event.feedback_form_link }}" target="_blank"
+                    rel="noopener">View Feedback Form</a></p>
+            {% endif %}
+            {% if event.feedback_sheet_id %}
+            <p><strong>Google Sheet ID:</strong> <code>{{ event.feedback_sheet_id }}</code></p>
+            {% endif %}
+            <p><small>Charts are generated dynamically when the report is created.</small></p>
+        </div>
+        {% endif %}
+
+        <div class="detail-section">
+            <h4>Uploaded Documents</h4>
+            <div class="document-list">
+                {% if event.permission_letter %}
+                <p><strong>Permission Letter:</strong> <a href="/{{ event.permission_letter }}" target="_blank">View</a>
+                </p>
+                {% else %}
+                <p><strong>Permission Letter:</strong> Not uploaded</p>
+                {% endif %}
+
+                {% if event.invitation_letter %}
+                <p><strong>Invitation Letter:</strong> <a href="/{{ event.invitation_letter }}" target="_blank">View</a>
+                </p>
+                {% else %}
+                <p><strong>Invitation Letter:</strong> Not uploaded</p>
+                {% endif %}
+
+                {% if event.notice_letter %}
+                <p><strong>Notice Letter:</strong> <a href="/{{ event.notice_letter }}" target="_blank">View</a></p>
+                {% else %}
+                <p><strong>Notice Letter:</strong> Not uploaded</p>
+                {% endif %}
+
+                {% if event.appreciation_letter %}
+                <p><strong>Appreciation Letter:</strong> <a href="/{{ event.appreciation_letter }}"
+                        target="_blank">View</a></p>
+                {% else %}
+                <p><strong>Appreciation Letter:</strong> Not uploaded</p>
+                {% endif %}
+
+                {% if event.attendance_photo %}
+                <p><strong>Attendance Sheet:</strong> <a href="/{{ event.attendance_photo }}" target="_blank">View</a>
+                </p>
+                {% else %}
+                <p><strong>Attendance Sheet:</strong> Not uploaded</p>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if photos and photos|length > 0 %}
+        <div class="detail-section">
+            <h4>Event Photographs</h4>
+            <div class="event-photos-grid">
+                {% for photo in photos %}
+                <div class="photo-item">
+                    <img src="/{{ photo }}" alt="Event Photo {{ loop.index }}" class="event-detail-photo">
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="event-actions">
+            <a href="{{ url_for('generate_report', event_id=event.id) }}" class="btn btn-primary">Generate Report</a>
+            <a href="{{ url_for('add_event', event_id=event.id) }}" class="btn btn-secondary">Edit Event</a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .event-details-container {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    .event-details-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .event-details-card h3 {
+        color: #2c3e50;
+        margin-bottom: 1.5rem;
+        font-size: 1.8rem;
+    }
+
+    .event-details-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .detail-item {
+        padding: 0.75rem;
+        background: #f8f9fa;
+        border-radius: 4px;
+    }
+
+    .detail-section {
+        margin-bottom: 2rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .detail-section:last-child {
+        border-bottom: none;
+    }
+
+    .detail-section h4 {
+        color: #2c3e50;
+        margin-bottom: 1rem;
+        font-size: 1.2rem;
+    }
+
+    .event-photos-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .photo-item {
+        border-radius: 4px;
+        overflow: hidden;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .event-detail-photo {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        display: block;
+    }
+
+    .event-actions {
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 2px solid #e0e0e0;
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .feedback-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+    }
+
+    .feedback-table th,
+    .feedback-table td {
+        padding: 0.75rem;
+        text-align: left;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .feedback-table th {
+        background-color: #f8f9fa;
+        font-weight: 600;
+        color: #2c3e50;
+    }
+
+    .feedback-table tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+
+    .document-list p {
+        margin-bottom: 0.75rem;
+        padding: 0.5rem;
+        background-color: #f8f9fa;
+        border-radius: 4px;
+    }
+
+    .document-list a {
+        color: #3498db;
+        text-decoration: none;
+    }
+
+    .document-list a:hover {
+        text-decoration: underline;
+    }
+</style>
+{% endblock %}

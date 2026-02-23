@@ -1,0 +1,46 @@
+P0: <<IMAGE_PERMISSION>>
+P1: <<IMAGE_INVITATION>>
+P2: <<IMAGE_NOTICE>>
+P3: EMPTY
+P4: Department of {{department}}
+P5: EMPTY
+P6: <<EVENT_DETAILS>>
+P7: EMPTY
+P8: Brief Description of Activity:
+P9: {{event_description}}
+P10: EMPTY
+P11: EMPTY
+P12: Outcomes of the Activity
+P13: • {{outcome_1}}
+P14: • {{outcome_2}}
+P15: • {{outcome_3}}
+P16: EMPTY
+P17: EMPTY
+P18: Photographs:
+P19: <<EVENT_PHOTOS>>
+P20: EMPTY
+P21: EMPTY
+P22: <<ATTENDANCE_FILE>>
+P23: EMPTY
+P24: <<IMAGE_APPRECIATION>>
+P25: Programme Outcome (POs):
+P26: {{PO_SECTION}}
+P27: EMPTY
+P28: Programme Specific Outcomes (PSO):
+P29: {{PSO_SECTION}}
+P30: EMPTY
+P31: Sustainable Development Goals (SDGs):
+P32: {{SDG_SECTION}}
+P33: EMPTY
+P34: EMPTY
+P35: Feedback:
+P36: Event Name: {{event_name}}
+P37: Date: {{date}}
+P38: Resource Person / Speaker: {{resource_person}}
+P39: Department / Organizer: {{department}}
+P40: <<FEEDBACK_TABLE>>
+P41: EMPTY
+P42: EMPTY
+P43: EMPTY
+
+--- Tables ---

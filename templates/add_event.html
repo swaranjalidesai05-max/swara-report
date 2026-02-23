@@ -1,0 +1,286 @@
+{% extends "base.html" %}
+
+{% block title %}{% if event_id %}Edit Event{% else %}Add Event{% endif %} - College Event Report System{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>{% if event_id %}Edit Event{% else %}Add New Event{% endif %}</h2>
+</div>
+
+<div class="form-container">
+    <form method="POST" action="{{ url_for('add_event') }}" enctype="multipart/form-data">
+        {% if event_id %}
+        <input type="hidden" name="event_id" value="{{ event_id }}">
+        {% endif %}
+
+        <div class="form-group">
+            <label for="title">Event Title *</label>
+            <input type="text" id="title" name="title" value="{{ event.title if event else '' }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="date">Event Date *</label>
+            <input type="date" id="date" name="date" value="{{ event.date if event else '' }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="venue">Venue *</label>
+            <input type="text" id="venue" name="venue" value="{{ event.venue if event else '' }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="department">Department *</label>
+            <input type="text" id="department" name="department" value="{{ event.department if event else '' }}"
+                required>
+        </div>
+
+        <div class="form-group">
+            <label for="description">Event Description</label>
+            <textarea id="description" name="description" rows="5">{{ event.description if event else '' }}</textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="academic_year">Academic Year *</label>
+            <input type="text" id="academic_year" name="academic_year" placeholder="2025-26"
+                value="{{ event.academic_year if event else '' }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="resource_person">Resource Person Name *</label>
+            <input type="text" id="resource_person" name="resource_person"
+                value="{{ event.resource_person if event else '' }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="resource_designation">Designation</label>
+            <input type="text" id="resource_designation" name="resource_designation"
+                value="{{ event.resource_designation if event else '' }}">
+        </div>
+
+        <div class="form-group">
+            <label for="event_coordinator">Event Coordinator</label>
+            <input type="text" id="event_coordinator" name="event_coordinator"
+                value="{{ event.event_coordinator if event else '' }}">
+        </div>
+
+        <div class="form-group">
+            <label for="event_time">Event Time *</label>
+            <input type="time" id="event_time" name="event_time" value="{{ event.event_time if event else '' }}"
+                required>
+        </div>
+
+        <div class="form-group">
+            <label for="event_type">Event Type</label>
+            <select id="event_type" name="event_type">
+                <option value="">Select Event Type</option>
+                <option value="Expert Session" {% if event and event.event_type=='Expert Session' %}selected{% endif %}>
+                    Expert Session</option>
+                <option value="Workshop" {% if event and event.event_type=='Workshop' %}selected{% endif %}>Workshop
+                </option>
+                <option value="Seminar" {% if event and event.event_type=='Seminar' %}selected{% endif %}>Seminar
+                </option>
+                <option value="Webinar" {% if event and event.event_type=='Webinar' %}selected{% endif %}>Webinar
+                </option>
+                <option value="Guest Lectures" {% if event and event.event_type=='Guest Lectures' %}selected{% endif %}>
+                    Guest Lectures</option>
+                <option value="Orientation Program" {% if event and event.event_type=='Orientation Program' %}selected{%
+                    endif %}>Orientation Program</option>
+                <option value="Student Activities" {% if event and event.event_type=='Student Activities' %}selected{%
+                    endif %}>Student Activities</option>
+                <option value="Convocation" {% if event and event.event_type=='Convocation' %}selected{% endif %}>
+                    Convocation</option>
+                <option value="Co-curricular Activities" {% if event and event.event_type=='Co-curricular Activities'
+                    %}selected{% endif %}>Co-curricular Activities</option>
+                <option value="Cultural Activities" {% if event and event.event_type=='Cultural Activities' %}selected{%
+                    endif %}>Cultural Activities</option>
+                <option value="Sports" {% if event and event.event_type=='Sports' %}selected{% endif %}>Sports</option>
+                <option value="Fests" {% if event and event.event_type=='Fests' %}selected{% endif %}>Fests</option>
+                <option value="Inter / Intra-College Competition" {% if event and
+                    event.event_type=='Inter / Intra-College Competition' %}selected{% endif %}>Inter / Intra-College
+                    Competition</option>
+                <option value="Other" {% if event and event.event_type=='Other' %}selected{% endif %}>Other</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="permission_letter">Permission Letter (Scanned)</label>
+            <input type="file" id="permission_letter" name="permission_letter" accept=".jpg,.png,.pdf">
+            <small>Accepted formats: JPG, PNG, PDF (Max 16MB)</small>
+        </div>
+
+        <div class="form-group">
+            <label for="invitation_letter">Invitation Letter (Scanned)</label>
+            <input type="file" id="invitation_letter" name="invitation_letter" accept=".jpg,.png,.pdf">
+            <small>Accepted formats: JPG, PNG, PDF (Max 16MB)</small>
+        </div>
+
+        <div class="form-group">
+            <label for="notice_letter">Notice (Scanned)</label>
+            <input type="file" id="notice_letter" name="notice_letter" accept=".jpg,.png,.pdf">
+            <small>Accepted formats: JPG, PNG, PDF (Max 16MB)</small>
+        </div>
+
+        <div class="form-group">
+            <label>Event Photographs</label>
+            <div id="photo-inputs">
+                <div class="photo-input-row"
+                    style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.5rem;">
+                    <button type="button" onclick="addPhotoInput()" title="Add another photo" style="width: 28px; height: 28px; min-width: 28px; border-radius: 50%; border: 2px solid #4a90d9;
+                               background: #e8f0fe; color: #4a90d9; font-size: 1.2rem; font-weight: bold;
+                               cursor: pointer; display: flex; align-items: center; justify-content: center;
+                               padding: 0; line-height: 1; transition: all 0.2s ease;">+</button>
+                    <input type="file" name="event_photos" accept=".jpg,.png" style="flex: 1;">
+                </div>
+            </div>
+            <small>Accepted formats: JPG, PNG (Max 16MB per file). Click <strong>+</strong> to add more photos.</small>
+        </div>
+
+        <script>
+            function addPhotoInput() {
+                var container = document.getElementById('photo-inputs');
+                var rows = container.querySelectorAll('.photo-input-row');
+                if (rows.length >= 10) {
+                    alert('Maximum 10 photos allowed.');
+                    return;
+                }
+                var row = document.createElement('div');
+                row.className = 'photo-input-row';
+                row.style.cssText = 'display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.5rem;';
+                row.innerHTML =
+                    '<button type="button" onclick="addPhotoInput()" title="Add another photo" ' +
+                    'style="width: 28px; height: 28px; min-width: 28px; border-radius: 50%; border: 2px solid #4a90d9; ' +
+                    'background: #e8f0fe; color: #4a90d9; font-size: 1.2rem; font-weight: bold; ' +
+                    'cursor: pointer; display: flex; align-items: center; justify-content: center; ' +
+                    'padding: 0; line-height: 1; transition: all 0.2s ease;">+</button>' +
+                    '<input type="file" name="event_photos" accept=".jpg,.png" style="flex: 1;">' +
+                    '<button type="button" onclick="removePhotoInput(this)" title="Remove" ' +
+                    'style="width: 24px; height: 24px; min-width: 24px; border-radius: 50%; border: 2px solid #e74c3c; ' +
+                    'background: #fdecea; color: #e74c3c; font-size: 1rem; font-weight: bold; ' +
+                    'cursor: pointer; display: flex; align-items: center; justify-content: center; ' +
+                    'padding: 0; line-height: 1; transition: all 0.2s ease;">&times;</button>';
+                container.appendChild(row);
+            }
+            function removePhotoInput(btn) {
+                btn.parentElement.remove();
+            }
+        </script>
+
+        <div class="form-group">
+            <label for="attendance_photo">Attendance Sheet Photo</label>
+            <input type="file" id="attendance_photo" name="attendance_photo" accept="image/*">
+            <small>Accepted formats: JPG, PNG, GIF (Max 16MB)</small>
+        </div>
+
+        <div class="form-group">
+            <label for="outcome_1">Outcome 1 *</label>
+            <input type="text" id="outcome_1" name="outcome_1" value="{{ event.outcome_1 if event else '' }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="outcome_2">Outcome 2 *</label>
+            <input type="text" id="outcome_2" name="outcome_2" value="{{ event.outcome_2 if event else '' }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="outcome_3">Outcome 3</label>
+            <input type="text" id="outcome_3" name="outcome_3" value="{{ event.outcome_3 if event else '' }}">
+        </div>
+
+        <div class="form-group">
+            <label>Programme Specific Outcomes (PSO) *</label>
+            <div>
+                <label style="display: block; margin-bottom: 0.25rem;">
+                    <input type="checkbox" name="pso1_selected" value="1" {% if event and event.pso1_selected
+                        %}checked{% endif %}>
+                    PSO1: An ability to apply the theoretical concepts and practical knowledge of Information Technology
+                    in the analysis, design, development, and management of information processing systems and
+                    applications in the interdisciplinary domain to understand the professional, business and business
+                    processes, ethical, legal, security and social issues and responsibilities.
+                </label><br>
+                <label style="display: block;">
+                    <input type="checkbox" name="pso2_selected" value="1" {% if event and event.pso2_selected
+                        %}checked{% endif %}>
+                    PSO2:An ability to analyze a problem and identify and define the computing infrastructure and
+                    operations requirements appropriate to its solution. IT graduates should be able to work on
+                    large-scale computing systems.
+                </label>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Program Outcomes (PO) *</label>
+            <div class="po-checklist" style="display: flex; flex-direction: column; gap: 0.35rem; margin-top: 0.5rem;">
+                {% for heading in po_headings %}
+                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                    <input type="checkbox" name="selected_pos" value="{{ heading }}" {% if heading in selected_pos_list
+                        %}checked{% endif %}>
+                    <span>{{ heading }}</span>
+                </label>
+                {% endfor %}
+            </div>
+            <small>Select at least one Program Outcome. No custom PO.</small>
+        </div>
+
+        <div class="form-group">
+            <label>Sustainable Development Goals (SDGs) Addressed</label>
+            <div class="sdg-checklist" style="display: flex; flex-direction: column; gap: 0.35rem; margin-top: 0.5rem;">
+                {% for code, title in sdg_list %}
+                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                    <input type="checkbox" name="selected_sdgs" value="{{ code }}" {% if code in selected_sdgs_list
+                        %}checked{% endif %}>
+                    <span>{{ code }}: {{ title }}</span>
+                </label>
+                {% endfor %}
+            </div>
+            <small>Select SDGs addressed by this event. If none selected, report will show "Not Applicable".</small>
+        </div>
+
+        <div class="form-group">
+            <label for="appreciation_letter">Appreciation Letter (Scanned)</label>
+            <input type="file" id="appreciation_letter" name="appreciation_letter" accept=".jpg,.png,.pdf">
+            <small>Accepted formats: JPG, PNG, PDF (Max 16MB)</small>
+        </div>
+
+        <div class="form-group">
+            <label>Feedback Form & Analysis</label>
+
+            <div class="form-group" style="margin-top: 1rem;">
+                <label for="feedback_form_link">Google Form Link</label>
+                <input type="url" id="feedback_form_link" name="feedback_form_link"
+                    placeholder="https://docs.google.com/forms/d/e/..."
+                    value="{{ event.feedback_form_link if event and event.feedback_form_link else '' }}">
+                <small>Paste the full URL of your Google Form. This will appear as a clickable hyperlink in the
+                    report.</small>
+            </div>
+
+            <div class="form-group" style="margin-top: 1rem;">
+                <label for="feedback_sheet_id">Google Sheet Link or ID (linked to the form)</label>
+                <input type="text" id="feedback_sheet_id" name="feedback_sheet_id"
+                    placeholder="Paste the full Google Sheets URL or just the Sheet ID"
+                    value="{{ event.feedback_sheet_id if event and event.feedback_sheet_id else '' }}">
+                <small>
+                    You can paste the <strong>full Google Sheets URL</strong>
+                    (e.g. <code>https://docs.google.com/spreadsheets/d/ABCDEF.../edit</code>)
+                    or just the Sheet ID.<br>
+                    <strong style="color: #e15759;">⚠ REQUIRED:</strong> The sheet must be shared publicly for chart
+                    generation to work:
+                    <ol style="margin: 6px 0 4px 20px; font-size: 0.85em;">
+                        <li>Open your Google Sheet</li>
+                        <li>Go to <strong>File → Share → Publish to Web</strong></li>
+                        <li>Select <strong>Entire Document</strong> → <strong>Comma-separated values (.csv)</strong>
+                        </li>
+                        <li>Click <strong>Publish</strong></li>
+                    </ol>
+                    <em>OR</em> at minimum: click <strong>Share → "Anyone with the link" → Viewer</strong>
+                </small>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">{% if event_id %}Update Event{% else %}Add Event{% endif
+                %}</button>
+            <a href="{{ url_for('events') }}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

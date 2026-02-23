@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}
+Events - College Event Report System
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <h2>Events</h2>
+
+    {% if session.user_id %}
+        <a href="{{ url_for('add_event') }}" class="btn btn-primary">
+            Add New Event
+        </a>
+    {% endif %}
+</div>
+
+{% if events %}
+<div class="events-grid">
+
+    {% for event in events %}
+    <div class="event-card">
+
+        <!-- ================= EVENT IMAGE ================= -->
+        <div class="event-card-image">
+            {% if event.photos and event.photos|length > 0 %}
+                <!-- Show first photo from event_photos (event photographs) -->
+                <img src="/{{ event.photos[0] }}"
+                     class="event-img"
+                     alt="{{ event.title }}">
+            {% else %}
+                <!-- Default placeholder when no event photographs -->
+                <div class="event-img-placeholder">
+                    <p>No Image</p>
+                </div>
+            {% endif %}
+        </div>
+        <!-- ================================================= -->
+
+        <!-- ================= EVENT CONTENT ================= -->
+        <div class="event-card-content">
+
+            <h3>{{ event.title }}</h3>
+
+            <div class="event-meta">
+                <p><strong>Date:</strong> {{ event.date }}</p>
+                <p><strong>Venue:</strong> {{ event.venue }}</p>
+                <p><strong>Department:</strong> {{ event.department }}</p>
+            </div>
+
+            {% if event.description %}
+            <p class="event-description">
+                {{ event.description[:150] }}
+                {% if event.description|length > 150 %}...{% endif %}
+            </p>
+            {% endif %}
+
+            <!-- ================= ACTION BUTTONS ================= -->
+            <div class="event-actions">
+
+                <a href="{{ url_for('generate_report', event_id=event.id) }}"
+                   class="btn btn-small btn-primary">
+                    Generate Report
+                </a>
+
+                <a href="{{ url_for('view_event', event_id=event.id) }}"
+                   class="btn btn-small btn-secondary">
+                    View Details
+                </a>
+
+                <a href="{{ url_for('add_event', event_id=event.id) }}"
+                   class="btn btn-small" style="background-color: #f39c12; color: white;">
+                    Edit
+                </a>
+
+                <form method="POST" action="{{ url_for('delete_event', event_id=event.id) }}" 
+                      style="display: inline;" 
+                      onsubmit="return confirm('Are you sure you want to delete this event? This action cannot be undone.');">
+                    <button type="submit" class="btn btn-small" style="background-color: #e74c3c; color: white; border: none; cursor: pointer;">
+                        Delete
+                    </button>
+                </form>
+
+            </div>
+            <!-- ================================================== -->
+
+        </div>
+        <!-- ================================================== -->
+
+    </div>
+    {% endfor %}
+
+</div>
+
+{% else %}
+<div class="empty-state">
+    <p>
+        No events found.
+        {% if session.user_id %}
+            <a href="{{ url_for('add_event') }}">Add your first event</a>
+        {% endif %}
+    </p>
+</div>
+{% endif %}
+
+{% endblock %}
